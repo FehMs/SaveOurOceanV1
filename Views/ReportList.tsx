@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import { BASE_URL } from '../components/config';
 
 const ReportList = () => {
   const [reports, setReports] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
-    axios.get('http://10.0.2.2:8080/relatos')
-      .then(response => setReports(response.data))
+    axios.get(`${BASE_URL}/relatos?size=200&sort=id`)
+      .then(response => {
+        const data = response.data.content || response.data;
+        setReports(data);
+      })
       .catch(error => console.error(error));
   }, []);
 
   const renderItems = ({ item }) => (
     <View style={styles.outBox}>
-      <TouchableOpacity onPress={() => navigation.navigate('Mapa')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Mapa') }>
         <Ionicons name='map' size={50} color='#00796b'/>
       </TouchableOpacity>
       <View style={styles.box}>
@@ -26,16 +30,15 @@ const ReportList = () => {
       </View>
     </View>
   );
-
+{}
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <FlatList 
         data={reports}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item.id ? item.id.toString() : Math.random().toString()}
         renderItem={renderItems}
-        scrollEnabled={false}
       />
-    </ScrollView>
+    </View>
   );
 };
 
@@ -76,3 +79,4 @@ const styles = StyleSheet.create({
 });
 
 export default ReportList;
+

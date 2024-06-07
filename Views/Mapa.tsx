@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
+import { BASE_URL } from '../components/config';
 
 const Mapa = ({ navigation }) => {
   const [reports, setReports] = useState([]);
@@ -9,8 +10,9 @@ const Mapa = ({ navigation }) => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const response = await axios.get('http://10.0.2.2:8080/relatos');
-        setReports(response.data);
+        const response = await axios.get(`${BASE_URL}/relatos`);
+        
+        setReports(Array.isArray(response.data.content) ? response.data.content : response.data);
       } catch (error) {
         console.error('Error fetching reports:', error);
       }
@@ -32,11 +34,11 @@ const Mapa = ({ navigation }) => {
       >
         {reports.map((report) => (
           <Marker
-            key={report.id}
-            coordinate={{ latitude: parseFloat(report.latitude), longitude: parseFloat(report.longitude) }}
-            title={report.tipo}
-            description={report.descricao}
-          />
+          key={report.id}
+          coordinate={{ latitude: parseFloat(report.latitude), longitude: parseFloat(report.longitude) }}
+          title={report.tipo}
+          description={report.descricao}
+        />
         ))}
       </MapView>
     </View>

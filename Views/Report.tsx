@@ -1,39 +1,72 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, ImageBackground } from 'react-native';
-import { Text, TextInput, Button, Card, Provider as PaperProvider } from 'react-native-paper';
+import { TextInput, Button, Card, Provider as PaperProvider, Text } from 'react-native-paper';
 
 const ReportForm = ({ navigation }) => {
   const [tipo, setTipo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  const [latitudeError, setLatitudeError] = useState('');
+  const [longitudeError, setLongitudeError] = useState('');
+
+  const isValidCoordinate = (value, type) => {
+    if (value.includes(',')) return false;
+
+    const num = parseFloat(value);
+    if (isNaN(num)) return false;
+
+    if (type === 'latitude') {
+      return num >= -90 && num <= 90;
+    } else if (type === 'longitude') {
+      return num >= -180 && num <= 180;
+    }
+    return false;
+  };
 
   const handleSubmit = () => {
+    let valid = true;
+
+    if (!isValidCoordinate(latitude, 'latitude')) {
+      setLatitudeError('Latitude inválida. Deve estar entre -90 e 90 e usar ponto como separador decimal.');
+      valid = false;
+    } else {
+      setLatitudeError('');
+    }
+
+    if (!isValidCoordinate(longitude, 'longitude')) {
+      setLongitudeError('Longitude inválida. Deve estar entre -180 e 180 e usar ponto como separador decimal.');
+      valid = false;
+    } else {
+      setLongitudeError('');
+    }
+
+    if (!valid) return;
+
     const poluicao = { tipo, descricao, latitude, longitude };
     
-    axios.post('http://10.0.2.2:8080/relatos', poluicao)
+    axios.post('https://apirest-saveourocean-production.up.railway.app/relatos', poluicao)
       .then(() => {
         Alert.alert('Poluição relatada com sucesso');
         setTipo('');
         setDescricao('');
         setLatitude('');
         setLongitude('');
+        setLatitudeError('');
+        setLongitudeError('');
 
         navigation.goBack();
       })
       .catch(error => {
         console.error(error);
-        Alert.alert('Error', 'Algo deu errado');
+        Alert.alert('Erro', 'Algo deu errado');
       });
   };
 
   return (
     <PaperProvider>
-      <ImageBackground
-        source={{ uri: 'https://cdn.discordapp.com/attachments/1004497178712096918/1247078998044049438/paisagem-natural-maritima-com-vista-idilica-da-agua.jpg?ex=665eb852&is=665d66d2&hm=cc9844941f84d067a80d2622a3bb5649af1ee74fe4df05bae3d9d44455637875&' }} // Substitua pela URL da sua imagem
-        style={styles.background}
-      >
+      <ImageBackground source={require("../assets/water.jpg")} style={styles.background}>
         <View style={styles.container}>
           <Card style={styles.card}>
             <Card.Title title="Relatar Poluição" titleStyle={styles.cardTitle} />
@@ -51,12 +84,14 @@ const ReportForm = ({ navigation }) => {
                 style={styles.input}
                 multiline
               />
+              {latitudeError ? <Text style={styles.errorText}>{latitudeError}</Text> : null}
               <TextInput
                 label="Latitude"
                 value={latitude}
                 onChangeText={setLatitude}
                 style={styles.input}
               />
+              {longitudeError ? <Text style={styles.errorText}>{longitudeError}</Text> : null}
               <TextInput
                 label="Longitude"
                 value={longitude}
@@ -106,6 +141,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: '#00796b',
     borderRadius: 10,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 

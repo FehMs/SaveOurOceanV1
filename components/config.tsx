@@ -1,0 +1,1 @@
+export const BASE_URL = 'https://apirest-saveourocean-production.up.railway.app'

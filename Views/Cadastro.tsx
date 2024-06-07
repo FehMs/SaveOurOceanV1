@@ -1,57 +1,55 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ImageBackground, Alert, ScrollView } from 'react-native';
-import { TextInput, Button, Card, Provider as PaperProvider, Text, Checkbox } from 'react-native-paper';
+import { TextInput, Button, Card, Provider as PaperProvider} from 'react-native-paper';
+import axios from 'axios';
+import { BASE_URL } from '../components/config';
 
-const VolunteerSignUp = () => {
-  const [name, setName] = useState('');
+const VolunteerSignUp = ({navigation}) => {
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [celular, setCelular] = useState('');
-  const [interests, setInterests] = useState([]);
-  const [description, setDescription] = useState('');
+  const [interesseArea, setInteresseArea] = useState('');
 
-  const handleSignUp = () => {
-    if (password !== confirmPassword) {
-      Alert.alert('Erro', 'As senhas não coincidem!');
-      return;
-    }
+  const handleSubmit = () => {
+  
 
-    const volunteerData = {
-      name,
+    const voluntario = {
+      nome,
       email,
-      interests,
-      description,
+      celular,
+      interesseArea,
     };
 
-    console.log(volunteerData);
-    Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+    axios.post(`${BASE_URL}/voluntario`, voluntario)
+    .then(() => {
+      Alert.alert('Voluntario cadastrado com sucesso');
+      setNome('');
+      setEmail('');
+      setCelular('');
+      setInteresseArea('');
+      navigation.goBack();
+    })
+    .catch(error => {
+      console.error(error);
+      Alert.alert('Erro', 'Todos os campos precisam ser completados');
+    });
   };
 
-  const toggleInterest = (interest) => {
-    if (interests.includes(interest)) {
-      setInterests(interests.filter(item => item !== interest));
-    } else {
-      setInterests([...interests, interest]);
-    }
-  };
+
 
   return (
     <PaperProvider>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <ImageBackground
-          source={{ uri: 'https://cdn.discordapp.com/attachments/1004497178712096918/1247078998044049438/paisagem-natural-maritima-com-vista-idilica-da-agua.jpg?ex=665eb852&is=665d66d2&hm=cc9844941f84d067a80d2622a3bb5649af1ee74fe4df05bae3d9d44455637875&' }} // Substitua pela URL da sua imagem
-          style={styles.background}
-        >
+      <ImageBackground source={require("../assets/water.jpg")} style={styles.background}>
           <View style={styles.container}>
             <Card style={styles.card}>
               <Card.Title title="Cadastro de Voluntário" titleStyle={styles.cardTitle} />
               <Card.Content>
                 <TextInput
                   label="Nome"
-                  value={name}
-                  onChangeText={setName}
+                  value={nome}
+                  onChangeText={setNome}
                   style={styles.input}
-
-
                 />
                 <TextInput
                   label="Email"
@@ -67,21 +65,14 @@ const VolunteerSignUp = () => {
                   onChangeText={setCelular}
                   style={styles.input}
                 />
-                <Text style={styles.sectionTitle}>Áreas de Interesse</Text>
-                <View style={styles.checkboxContainer}>
-                  <Checkbox.Item label="Meio Ambiente" status={interests.includes('Meio Ambiente') ? 'checked' : 'unchecked'} onPress={() => toggleInterest('Meio Ambiente')} />
-                  <Checkbox.Item label="Educação" status={interests.includes('Educação') ? 'checked' : 'unchecked'} onPress={() => toggleInterest('Educação')} />
-                  <Checkbox.Item label="Saúde" status={interests.includes('Saúde') ? 'checked' : 'unchecked'} onPress={() => toggleInterest('Saúde')} />
-                  <Checkbox.Item label="Assistência Social" status={interests.includes('Assistência Social') ? 'checked' : 'unchecked'} onPress={() => toggleInterest('Assistência Social')} />
-                </View>
                 <TextInput
-                  label="Descrição"
-                  value={description}
-                  onChangeText={setDescription}
+                  label="Áreas de Interesse"
+                  value={interesseArea}
+                  onChangeText={setInteresseArea}
                   style={styles.input}
                   multiline
                 />
-                <Button mode="contained" onPress={handleSignUp} style={styles.button}>
+                <Button mode="contained" onPress={handleSubmit} style={styles.button}>
                   Cadastrar
                 </Button>
               </Card.Content>

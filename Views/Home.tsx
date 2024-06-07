@@ -9,7 +9,7 @@ const App = () => {
     <PaperProvider>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
-          <Image source={{ uri: 'https://cdn.discordapp.com/attachments/1004497178712096918/1247078998044049438/paisagem-natural-maritima-com-vista-idilica-da-agua.jpg?ex=665eb852&is=665d66d2&hm=cc9844941f84d067a80d2622a3bb5649af1ee74fe4df05bae3d9d44455637875&' }} style={styles.image}/>
+        <Image source={require("../assets/water.jpg")} style={styles.image} />
           <Text style={styles.title}>Save Our Sea</Text>
           <Text style={styles.titleMin}>por um oceano melhor</Text>
         </View>
@@ -20,7 +20,7 @@ const App = () => {
             e são o lar de milhões de espécies marinhas. Manter os oceanos limpos é essencial para
             preservar esses ecossistemas e garantir a saúde do nosso planeta.
           </Text>
-          <Image source={{ uri: 'https://cdn.discordapp.com/attachments/1004497178712096918/1247082511658516603/quiet-issue-underwater-plastics-float-blue-sea.jpg?ex=665ebb98&is=665d6a18&hm=f8f7241a289a4c524aae087d115f597dcfce30f553b07bd01d93980d26e83e0b&' }} style={styles.imagePlus}
+          <Image source={require("../assets/water2.jpg")} style={styles.imagePlus}
           />
           <Text style={styles.subtitle}>Dados Impactantes</Text>
           <Card style={styles.card}>
@@ -32,9 +32,7 @@ const App = () => {
               <ProgressBar progress={0.8} color={theme.colors.primary} style={styles.progressBar} />
             </Card.Content>
           </Card>
-          <Image
-            source={{ uri: 'https://cdn.discordapp.com/attachments/1004497178712096918/1247075720698658836/paisagem-natural-com-areia-preta-na-praia.jpg?ex=665eb545&is=665d63c5&hm=71a53b2663b3e4d0c8c94d7ab8bdd2aa7d79ef76ffb2c3489a0170e249b9cbd5&' }}
-            style={styles.image}
+          <Image source={require("../assets/water3.jpg")} style={styles.image}
           />
           <Text style={styles.subtitle}>Como Você Pode Ajudar</Text>
           <List.Section>
